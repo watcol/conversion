@@ -5,7 +5,9 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
-/// Types to convert N items into M outputs.
+pub mod infallible;
+
+/// A trait for converters which converts N items into M outputs.
 pub trait Converter {
     /// The type of input items.
     type Item;
