@@ -4,24 +4,24 @@ use core::convert::Infallible;
 
 use crate::Converter;
 
-/// A decoder for UTF-8.
-pub struct UTF8Decoder;
+/// An encoder for UTF-8.
+pub struct UTF8Encoder;
 
-impl Default for UTF8Decoder {
+impl Default for UTF8Encoder {
     #[inline]
     fn default() -> Self {
         Self
     }
 }
 
-impl UTF8Decoder {
+impl UTF8Encoder {
     #[inline]
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Converter for UTF8Decoder {
+impl Converter for UTF8Encoder {
     type Item = char;
     type Output = u8;
     type Error = Infallible;
