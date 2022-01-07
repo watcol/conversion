@@ -1,12 +1,15 @@
 //! An abstraction crate to convert iterators on the fly.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly", feature(doc_cfg))]
+#![cfg_attr(feature = "nightly", feature(option_result_unwrap_unchecked))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
 pub mod error;
 pub mod infallible;
+
+pub mod iterator;
 
 /// A trait for converters which converts N items into M outputs.
 pub trait Converter {
