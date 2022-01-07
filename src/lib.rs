@@ -5,6 +5,7 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+pub mod error;
 pub mod infallible;
 
 /// A trait for converters which converts N items into M outputs.
