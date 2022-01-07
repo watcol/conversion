@@ -27,7 +27,11 @@ impl<I, C, O> ConvertedIterator<I, C, O> {
     }
 }
 
-impl<I: Iterator, C: Converter> Iterator for ConvertedIterator<I, C, C::Output> {
+impl<I, C> Iterator for ConvertedIterator<I, C, C::Output>
+where
+    I: Iterator,
+    C: Converter<Item = I::Item>,
+{
     type Item = Result<C::Output, C::Error>;
 
     fn next(&mut self) -> Option<Self::Item> {
