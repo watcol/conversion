@@ -30,39 +30,10 @@ impl Converter for UTF8Encoder {
     where
         E: Extend<Self::Output>,
     {
-        let code = item as u32;
-        let len = match code {
-            0x0000..=0x007F => {
-                buf.extend([code as u8]);
-                1
-            }
-            0x0080..=0x07FF => {
-                buf.extend([
-                    0b1100_0000 | ((code & 0b111_1100_0000) >> 6) as u8,
-                    0b10000000 | ((code & 0b000_0011_1111) as u8),
-                ]);
-                2
-            }
-            0x0800..=0xFFFF => {
-                buf.extend([
-                    0b1110_0000 | ((code & 0b1111_0000_0000_0000) >> 12) as u8,
-                    0b1000_0000 | ((code & 0b0000_1111_1100_0000) >> 6) as u8,
-                    0b1000_0000 | ((code & 0b0000_0000_0011_1111) as u8),
-                ]);
-                3
-            }
-            0x10000..=0x10FFFF => {
-                buf.extend([
-                    0b1111_0000 | ((code & 0b1_1100_0000_0000_0000_0000) >> 18) as u8,
-                    0b1000_0000 | ((code & 0b0_0011_1111_0000_0000_0000) >> 12) as u8,
-                    0b1000_0000 | ((code & 0b0_0000_0000_1111_1100_0000) >> 6) as u8,
-                    0b1000_0000 | ((code & 0b0_0000_0000_0000_0011_1111) as u8),
-                ]);
-                4
-            }
-            _ => unreachable!(),
-        };
-        Ok(len)
+        let tmp_buf = [0u8; 4];
+        let res = item.encode_utf8(&mut tmp_buf);
+        buf.extend(tmp_buf);
+        Ok(res.len())
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
