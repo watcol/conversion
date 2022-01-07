@@ -51,7 +51,7 @@ impl Converter for UTF32Decoder {
     }
 }
 
-/// A 32-bit encoder for UTF32.
+/// A 32-bit encoder for UTF-32.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF32Encoder;
 
@@ -78,5 +78,143 @@ impl Converter for UTF32Encoder {
 
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(1))
+    }
+}
+
+/// A byte decoder for UTF-32 (big-endian).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct UTF32BEDecoder {
+    bytes: [u8; 4],
+    count: usize,
+}
+
+impl UTF32BEDecoder {
+    /// Create a new instance.
+    #[inline]
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Converter for UTF32BEDecoder {
+    type Item = u8;
+    type Output = char;
+    type Error = UTF32EncodingError;
+
+    fn convert<E>(&mut self, item: Self::Item, buf: &mut E) -> Result<usize, Self::Error>
+    where
+        E: Extend<Self::Output>,
+    {
+        self.bytes[self.count] = item;
+        if self.count == 3 {
+            self.count = 0;
+            UTF32Decoder.convert(u32::from_be_bytes(self.bytes), buf)
+        } else {
+            self.count += 1;
+            Ok(0)
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (0, Some(1))
+    }
+}
+
+/// A byte encoder for UTF-32 (big-endian).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct UTF32BEEncoder;
+
+impl UTF32BEEncoder {
+    /// Create a new instance.
+    #[inline]
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Converter for UTF32BEEncoder {
+    type Item = char;
+    type Output = u8;
+    type Error = Infallible;
+
+    fn convert<E>(&mut self, item: Self::Item, buf: &mut E) -> Result<usize, Self::Error>
+    where
+        E: Extend<Self::Output>,
+    {
+        buf.extend((item as u32).to_be_bytes());
+        Ok(4)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (4, Some(4))
+    }
+}
+
+/// A byte decoder for UTF-32 (little-endian).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct UTF32LEDecoder {
+    bytes: [u8; 4],
+    count: usize,
+}
+
+impl UTF32LEDecoder {
+    /// Create a new instance.
+    #[inline]
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Converter for UTF32LEDecoder {
+    type Item = u8;
+    type Output = char;
+    type Error = UTF32EncodingError;
+
+    fn convert<E>(&mut self, item: Self::Item, buf: &mut E) -> Result<usize, Self::Error>
+    where
+        E: Extend<Self::Output>,
+    {
+        self.bytes[self.count] = item;
+        if self.count == 3 {
+            self.count = 0;
+            UTF32Decoder.convert(u32::from_le_bytes(self.bytes), buf)
+        } else {
+            self.count += 1;
+            Ok(0)
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (0, Some(1))
+    }
+}
+
+/// A byte encoder for UTF-32 (little-endian).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct UTF32LEEncoder;
+
+impl UTF32LEEncoder {
+    /// Create a new instance.
+    #[inline]
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Converter for UTF32LEEncoder {
+    type Item = char;
+    type Output = u8;
+    type Error = Infallible;
+
+    fn convert<E>(&mut self, item: Self::Item, buf: &mut E) -> Result<usize, Self::Error>
+    where
+        E: Extend<Self::Output>,
+    {
+        buf.extend((item as u32).to_le_bytes());
+        Ok(4)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (4, Some(4))
     }
 }
