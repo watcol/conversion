@@ -11,6 +11,8 @@ pub mod infallible;
 pub mod iterator;
 pub mod stream;
 
+pub mod converter;
+
 /// A trait for converters which converts N items into M outputs.
 pub trait Converter {
     /// The type of input items.
@@ -27,7 +29,9 @@ pub trait Converter {
     /// you should store the item and return `Ok(0)`.
     ///
     /// [`Extend`]: core::iter::Extend
-    fn convert<E>(&mut self, item: Self::Item, buf: &mut E) -> Result<usize, Self::Error>;
+    fn convert<E>(&mut self, item: Self::Item, buf: &mut E) -> Result<usize, Self::Error>
+    where
+        E: Extend<Self::Output>;
 
     /// Returns whether the converter reached the end, or not.
     ///
