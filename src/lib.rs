@@ -8,7 +8,11 @@ extern crate alloc;
 pub mod error;
 pub mod infallible;
 
+#[cfg(feature = "alloc")]
+#[cfg_attr(feature = "nightly", doc(cfg(feature = "alloc")))]
 pub mod iterator;
+#[cfg(feature = "async")]
+#[cfg_attr(feature = "nightly", doc(cfg(feature = "async")))]
 pub mod stream;
 
 pub mod converter;
