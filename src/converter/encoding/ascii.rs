@@ -21,16 +21,11 @@ impl fmt::Display for ASCIIEncodingError {
 impl std::error::Error for ASCIIEncodingError {}
 
 /// A decoder for 7-bit ASCII.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ASCIIDecoder;
 
-impl Default for ASCIIDecoder {
-    #[inline]
-    fn default() -> Self {
-        Self
-    }
-}
-
 impl ASCIIDecoder {
+    /// Create a new instance.
     #[inline]
     pub fn new() -> Self {
         Self::default()
@@ -60,16 +55,11 @@ impl Converter for ASCIIDecoder {
 }
 
 /// An encoder for 7-bit ASCII.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ASCIIEncoder;
 
-impl Default for ASCIIEncoder {
-    #[inline]
-    fn default() -> Self {
-        Self
-    }
-}
-
 impl ASCIIEncoder {
+    /// Create a new instance.
     #[inline]
     pub fn new() -> Self {
         Self::default()
