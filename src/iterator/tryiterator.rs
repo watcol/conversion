@@ -6,6 +6,7 @@ use alloc::collections::VecDeque;
 ///
 /// [`Iterator`]: core::iter::Iterator
 /// [`Converter`]: crate::Converter
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConvertedTryIterator<I, C, O> {
     buffer: VecDeque<O>,
     iter: I,

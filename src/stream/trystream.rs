@@ -10,7 +10,7 @@ pin_project! {
     ///
     /// [`TryStream`]: futures_core::stream::TryStream
     /// [`Converter`]: crate::Converter
-    #[derive(Debug)]
+    #[derive(Clone, Debug, PartialEq, Eq)]
     pub struct ConvertedTryStream<S, C, O> {
         buffer: VecDeque<O>,
         #[pin]

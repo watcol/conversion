@@ -5,6 +5,7 @@ use crate::Converter;
 /// Converting values with [`TryInto`] trait.
 ///
 /// [`TryInto`]: core::convert::TryInto
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct IntoConverter<I, O> {
     _phantomi: PhantomData<I>,
     _phantomo: PhantomData<O>,
@@ -40,7 +41,7 @@ where
     where
         E: Extend<Self::Output>,
     {
-        buf.extend(Some(item.try_into()?));
+        buf.extend([item.try_into()?]);
         Ok(1)
     }
 

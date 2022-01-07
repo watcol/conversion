@@ -5,6 +5,7 @@ use crate::Converter;
 /// Converting values with a function.
 ///
 /// [`TryInto`]: core::convert::TryInto
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct MapConverter<F, I> {
     f: F,
     _phantomi: PhantomData<I>,
@@ -40,7 +41,7 @@ where
     where
         E: Extend<Self::Output>,
     {
-        buf.extend(Some((self.f)(item)));
+        buf.extend([(self.f)(item)]);
         Ok(1)
     }
 
