@@ -15,12 +15,16 @@ pub struct ConvertedIterator<I, C, O> {
     converter: C,
 }
 
-impl<I, C, O> ConvertedIterator<I, C, O> {
+impl<I, C> ConvertedIterator<I, C, C::Output>
+where
+    I: Iterator,
+    C: Converter<Item = I::Item>,
+{
     /// Creating a new instance.
-    #[inline]
     pub fn new(iter: I, converter: C) -> Self {
+        let (min, max) = converter.size_hint();
         Self {
-            buffer: VecDeque::new(),
+            buffer: VecDeque::with_capacity(max.unwrap_or(min)),
             iter,
             converter,
         }

@@ -19,12 +19,17 @@ pin_project! {
     }
 }
 
-impl<S, C, O> ConvertedTryStream<S, C, O> {
+impl<S, C> ConvertedTryStream<S, C, C::Output>
+where
+    S: TryStream,
+    C: Converter<Item = S::Ok>,
+{
     /// Creating a new instance.
     #[inline]
     pub fn new(stream: S, converter: C) -> Self {
+        let (min, max) = converter.size_hint();
         Self {
-            buffer: VecDeque::new(),
+            buffer: VecDeque::with_capacity(max.unwrap_or(min)),
             stream,
             converter,
         }

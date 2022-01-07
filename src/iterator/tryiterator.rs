@@ -12,12 +12,17 @@ pub struct ConvertedTryIterator<I, C, O> {
     converter: C,
 }
 
-impl<I, C, O> ConvertedTryIterator<I, C, O> {
+impl<I, C, T, E> ConvertedTryIterator<I, C, C::Output>
+where
+    I: Iterator<Item = Result<T, E>>,
+    C: Converter<Item = T>,
+{
     /// Creating a new instance.
     #[inline]
     pub fn new(iter: I, converter: C) -> Self {
+        let (min, max) = converter.size_hint();
         Self {
-            buffer: VecDeque::new(),
+            buffer: VecDeque::with_capacity(max.unwrap_or(min)),
             iter,
             converter,
         }
