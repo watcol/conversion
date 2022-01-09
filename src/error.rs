@@ -7,7 +7,7 @@ use core::fmt;
 ///
 /// [`ConvertedTryIterator`]: crate::iterator::ConvertedTryIterator
 /// [`ConvertedTryStream`]: crate::stream::ConvertedTryStream
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CombinedError<S, C> {
     Stream(S),
     Conversion(C),

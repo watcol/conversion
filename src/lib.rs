@@ -1,7 +1,7 @@
 //! An abstraction crate to convert iterators on the fly.
 //!
 //! # Demo
-//! ```ignore
+//! ```
 //! use conversion::{
 //!     converter::{
 //!         encoding::utf8::{UTF8Decoder, UTF8Encoder},
@@ -16,23 +16,24 @@
 //! // Decoding UTF-8 byte string.
 //! let mut decoded = ConvertedIterator::new(iter, UTF8Decoder::new());
 //! // Convert to uppercase. (use ConvertedTryIterator because `decoded` returns Result items.)
-//! let mut uppered = ConvertedTryIterator::new(deocded, MapConverter::new(char::to_ascii_uppercase));
+//! let mut uppered =
+//!     ConvertedTryIterator::new(decoded, MapConverter::new(|c: char| c.to_ascii_uppercase()));
 //!
 //! // Clone it because it will be consumed.
 //! let uppered2 = uppered.clone();
 //!
 //! assert_eq!(Some(Ok('𝄞')), uppered.next());
-//! assert_eq!(Some(Ok('m')), uppered.next());
-//! assert_eq!(Some(Ok('u')), uppered.next());
-//! assert_eq!(Some(Ok('s')), uppered.next());
-//! assert_eq!(Some(Ok('i')), uppered.next());
-//! assert_eq!(Some(Ok('c')), uppered.next());
+//! assert_eq!(Some(Ok('M')), uppered.next());
+//! assert_eq!(Some(Ok('U')), uppered.next());
+//! assert_eq!(Some(Ok('S')), uppered.next());
+//! assert_eq!(Some(Ok('I')), uppered.next());
+//! assert_eq!(Some(Ok('C')), uppered.next());
 //! assert_eq!(None, uppered.next());
 //!
 //! // Re-encode the value.
 //! let encoded: Result<Vec<u8>, _> = ConvertedTryIterator::new(uppered2, UTF8Encoder::new()).collect();
 //!
-//! assert_eq!(b"\xf0\x9d\x84\x9emusic".to_vec(), encoded.unwrap());
+//! assert_eq!(b"\xf0\x9d\x84\x9eMUSIC".to_vec(), encoded.unwrap());
 //! ```
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly", feature(doc_cfg))]

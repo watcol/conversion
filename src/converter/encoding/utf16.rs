@@ -97,9 +97,9 @@ impl Converter for UTF16Encoder {
         E: Extend<Self::Output>,
     {
         let mut tmp_buf = [0u16; 2];
-        let res = item.encode_utf16(&mut tmp_buf).len();
-        buf.extend(tmp_buf);
-        Ok(res)
+        let len = item.encode_utf16(&mut tmp_buf).len();
+        buf.extend(tmp_buf.into_iter().take(len));
+        Ok(len)
     }
 
     #[inline]
@@ -176,11 +176,11 @@ impl Converter for UTF16BEEncoder {
         E: Extend<Self::Output>,
     {
         let mut tmp_buf = [0u16; 2];
-        let res = item.encode_utf16(&mut tmp_buf).len();
-        for w in tmp_buf {
+        let len = item.encode_utf16(&mut tmp_buf).len();
+        for w in tmp_buf.into_iter().take(len) {
             buf.extend(w.to_be_bytes());
         }
-        Ok(res * 2)
+        Ok(len * 2)
     }
 
     #[inline]
@@ -257,11 +257,11 @@ impl Converter for UTF16LEEncoder {
         E: Extend<Self::Output>,
     {
         let mut tmp_buf = [0u16; 2];
-        let res = item.encode_utf16(&mut tmp_buf).len();
-        for w in tmp_buf {
+        let len = item.encode_utf16(&mut tmp_buf).len();
+        for w in tmp_buf.into_iter().take(len) {
             buf.extend(w.to_le_bytes());
         }
-        Ok(res * 2)
+        Ok(len * 2)
     }
 
     #[inline]

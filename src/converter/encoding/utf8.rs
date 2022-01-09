@@ -127,9 +127,9 @@ impl Converter for UTF8Encoder {
         E: Extend<Self::Output>,
     {
         let mut tmp_buf = [0u8; 4];
-        let res = item.encode_utf8(&mut tmp_buf).len();
-        buf.extend(tmp_buf);
-        Ok(res)
+        let len = item.encode_utf8(&mut tmp_buf).len();
+        buf.extend(tmp_buf.into_iter().take(len));
+        Ok(len)
     }
 
     #[inline]
