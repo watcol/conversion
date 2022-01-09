@@ -14,7 +14,7 @@
 //! let iter = b"\xf0\x9d\x84\x9emusic".into_iter().cloned();
 //!
 //! // Decoding UTF-8 byte string.
-//! let mut decoded = ConvertedIterator::new(iter, UTF8Decoder::new());
+//! let decoded = ConvertedIterator::new(iter, UTF8Decoder::new());
 //! // Convert to uppercase. (use ConvertedTryIterator because `decoded` returns Result items.)
 //! let mut uppered =
 //!     ConvertedTryIterator::new(decoded, MapConverter::new(|c: char| c.to_ascii_uppercase()));
@@ -37,6 +37,7 @@
 //! ```
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly", feature(doc_cfg))]
+#![doc(test(attr(deny(warnings))))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
