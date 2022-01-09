@@ -58,7 +58,7 @@ pub trait Converter {
     ///
     /// [`is_ended`]: Self::is_ended
     #[inline]
-    fn finalize(&self) -> Result<(), Self::Error> {
+    fn finalize(&mut self) -> Result<(), Self::Error> {
         Ok(())
     }
 

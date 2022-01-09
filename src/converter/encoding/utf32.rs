@@ -118,7 +118,7 @@ impl Converter for UTF32BEDecoder {
     }
 
     #[inline]
-    fn finalize(&self) -> Result<(), Self::Error> {
+    fn finalize(&mut self) -> Result<(), Self::Error> {
         if self.count == 0 {
             Ok(())
         } else {
@@ -198,7 +198,7 @@ impl Converter for UTF32LEDecoder {
     }
 
     #[inline]
-    fn finalize(&self) -> Result<(), Self::Error> {
+    fn finalize(&mut self) -> Result<(), Self::Error> {
         if self.count == 0 {
             Ok(())
         } else {

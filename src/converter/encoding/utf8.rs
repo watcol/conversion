@@ -91,7 +91,7 @@ impl Converter for UTF8Decoder {
     }
 
     #[inline]
-    fn finalize(&self) -> Result<(), Self::Error> {
+    fn finalize(&mut self) -> Result<(), Self::Error> {
         if self.remain == 0 {
             Ok(())
         } else {

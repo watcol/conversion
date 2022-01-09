@@ -61,7 +61,7 @@ impl Converter for UTF16Decoder {
     }
 
     #[inline]
-    fn finalize(&self) -> Result<(), Self::Error> {
+    fn finalize(&mut self) -> Result<(), Self::Error> {
         if self.buf.is_none() {
             Ok(())
         } else {
@@ -138,7 +138,7 @@ impl Converter for UTF16BEDecoder {
         }
     }
 
-    fn finalize(&self) -> Result<(), Self::Error> {
+    fn finalize(&mut self) -> Result<(), Self::Error> {
         self.inner.finalize()?;
 
         if self.byte.is_some() {
@@ -219,7 +219,7 @@ impl Converter for UTF16LEDecoder {
         }
     }
 
-    fn finalize(&self) -> Result<(), Self::Error> {
+    fn finalize(&mut self) -> Result<(), Self::Error> {
         self.inner.finalize()?;
 
         if self.byte.is_none() {
