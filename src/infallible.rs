@@ -9,13 +9,29 @@ pub trait InfallibleConverter: Converter + sealed_converter::Sealed {
     /// Converting without any errors.
     fn convert_ok<E>(&mut self, item: Self::Item, buf: &mut E) -> usize
     where
-        E: Extend<Self::Output>,
-    {
-        self.convert(item, buf).unwrap_or(0)
-    }
+        E: Extend<Self::Output>;
+
+    /// Finalizing without any errors.
+    fn finalize_ok(&mut self);
 }
 
-impl<C: Converter> InfallibleConverter for C where C::Error: InfallibleError {}
+impl<C: Converter> InfallibleConverter for C
+where
+    C::Error: InfallibleError,
+{
+    #[inline]
+    fn convert_ok<E>(&mut self, item: Self::Item, buf: &mut E) -> usize
+    where
+        E: Extend<Self::Output>,
+    {
+        self.convert(item, buf).unwrap_safe()
+    }
+
+    #[inline]
+    fn finalize_ok(&mut self) {
+        self.finalize().unwrap_safe()
+    }
+}
 
 /// A marker trait for error types that will never constructed.
 ///
