@@ -33,7 +33,7 @@
 //! // Re-encode the value.
 //! let encoded: Result<Vec<u8>, _> = ConvertedTryIterator::new(uppered2, UTF8Encoder::new()).collect();
 //!
-//! assert_eq!(b"\xf0\x9d\x84\x9eMUSIC".to_vec(), encoded.unwrap());
+//! assert_eq!(Ok(b"\xf0\x9d\x84\x9eMUSIC".to_vec()), encoded);
 //! ```
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly", feature(doc_cfg))]
