@@ -10,7 +10,7 @@ pub struct UTF8EncodingError;
 
 impl fmt::Display for UTF8EncodingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "failed to decode UTF-8 sequence.")
+        write!(f, "found invalid UTF-8 sequence.")
     }
 }
 
@@ -90,6 +90,16 @@ impl Converter for UTF8Decoder {
         }
     }
 
+    #[inline]
+    fn finalize(&self) -> Result<(), Self::Error> {
+        if self.remain == 0 {
+            Ok(())
+        } else {
+            Err(UTF8EncodingError)
+        }
+    }
+
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, Some(1))
     }
@@ -122,6 +132,7 @@ impl Converter for UTF8Encoder {
         Ok(res)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(4))
     }

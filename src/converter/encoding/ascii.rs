@@ -45,6 +45,7 @@ impl Converter for ASCIIDecoder {
         }
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(1))
     }
@@ -79,6 +80,7 @@ impl Converter for ASCIIEncoder {
         }
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(1))
     }

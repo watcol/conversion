@@ -9,7 +9,7 @@ pub struct UTF32EncodingError;
 
 impl fmt::Display for UTF32EncodingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "a codepoint is out of bound.")
+        write!(f, "found invalid UTF32 sequence.")
     }
 }
 
@@ -46,6 +46,7 @@ impl Converter for UTF32Decoder {
         }
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(1))
     }
@@ -76,6 +77,7 @@ impl Converter for UTF32Encoder {
         Ok(1)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(1))
     }
@@ -115,6 +117,16 @@ impl Converter for UTF32BEDecoder {
         }
     }
 
+    #[inline]
+    fn finalize(&self) -> Result<(), Self::Error> {
+        if self.count == 0 {
+            Ok(())
+        } else {
+            Err(UTF32EncodingError)
+        }
+    }
+
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, Some(1))
     }
@@ -145,6 +157,7 @@ impl Converter for UTF32BEEncoder {
         Ok(4)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (4, Some(4))
     }
@@ -184,6 +197,16 @@ impl Converter for UTF32LEDecoder {
         }
     }
 
+    #[inline]
+    fn finalize(&self) -> Result<(), Self::Error> {
+        if self.count == 0 {
+            Ok(())
+        } else {
+            Err(UTF32EncodingError)
+        }
+    }
+
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, Some(1))
     }
@@ -214,6 +237,7 @@ impl Converter for UTF32LEEncoder {
         Ok(4)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (4, Some(4))
     }

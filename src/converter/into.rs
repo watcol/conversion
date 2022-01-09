@@ -45,6 +45,7 @@ where
         Ok(1)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(1))
     }

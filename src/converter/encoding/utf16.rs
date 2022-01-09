@@ -11,7 +11,7 @@ pub struct UTF16EncodingError;
 
 impl fmt::Display for UTF16EncodingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "a character is not valid.")
+        write!(f, "found invalid UTF16 sequence.")
     }
 }
 
@@ -60,6 +60,16 @@ impl Converter for UTF16Decoder {
         }
     }
 
+    #[inline]
+    fn finalize(&self) -> Result<(), Self::Error> {
+        if self.buf.is_none() {
+            Ok(())
+        } else {
+            Err(UTF16EncodingError)
+        }
+    }
+
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, Some(1))
     }
@@ -92,6 +102,7 @@ impl Converter for UTF16Encoder {
         Ok(res)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(2))
     }
@@ -101,6 +112,7 @@ impl Converter for UTF16Encoder {
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF16BEDecoder {
     byte: Option<u8>,
+    inner: UTF16Decoder,
 }
 
 impl UTF16BEDecoder {
@@ -121,11 +133,22 @@ impl Converter for UTF16BEDecoder {
         E: Extend<Self::Output>,
     {
         match self.byte {
-            Some(b) => UTF16Decoder::new().convert(u16::from_be_bytes([b, item]), buf),
+            Some(b) => self.inner.convert(u16::from_be_bytes([b, item]), buf),
             None => Ok(0),
         }
     }
 
+    fn finalize(&self) -> Result<(), Self::Error> {
+        self.inner.finalize()?;
+
+        if self.byte.is_some() {
+            Ok(())
+        } else {
+            Err(UTF16EncodingError)
+        }
+    }
+
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, Some(1))
     }
@@ -160,6 +183,7 @@ impl Converter for UTF16BEEncoder {
         Ok(res * 2)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (2, Some(4))
     }
@@ -169,6 +193,7 @@ impl Converter for UTF16BEEncoder {
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF16LEDecoder {
     byte: Option<u8>,
+    inner: UTF16Decoder,
 }
 
 impl UTF16LEDecoder {
@@ -189,11 +214,22 @@ impl Converter for UTF16LEDecoder {
         E: Extend<Self::Output>,
     {
         match self.byte {
-            Some(b) => UTF16Decoder::new().convert(u16::from_le_bytes([b, item]), buf),
+            Some(b) => self.inner.convert(u16::from_le_bytes([b, item]), buf),
             None => Ok(0),
         }
     }
 
+    fn finalize(&self) -> Result<(), Self::Error> {
+        self.inner.finalize()?;
+
+        if self.byte.is_none() {
+            Ok(())
+        } else {
+            Err(UTF16EncodingError)
+        }
+    }
+
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, Some(1))
     }
@@ -228,6 +264,7 @@ impl Converter for UTF16LEEncoder {
         Ok(res * 2)
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (2, Some(4))
     }
