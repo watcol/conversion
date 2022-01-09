@@ -38,7 +38,7 @@ where
     type Item = Result<C::Output, CombinedError<E, C::Error>>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.buffer.is_empty() {
+        if !self.buffer.is_empty() {
             self.buffer.pop_front().map(Ok)
         } else {
             loop {
