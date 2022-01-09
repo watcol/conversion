@@ -46,11 +46,18 @@ where
             loop {
                 match self.iter.next() {
                     Some(item) => match self.converter.convert(item, &mut self.buffer) {
+                        Ok(0) if self.converter.is_ended() => match self.converter.finalize() {
+                            Ok(()) => break None,
+                            Err(e) => break Some(Err(e)),
+                        },
                         Ok(0) => continue,
                         Ok(_) => break self.buffer.pop_front().map(Ok),
                         Err(e) => break Some(Err(e)),
                     },
-                    None => break None,
+                    None => match self.converter.finalize() {
+                        Ok(()) => break None,
+                        Err(e) => break Some(Err(e)),
+                    },
                 }
             }
         }

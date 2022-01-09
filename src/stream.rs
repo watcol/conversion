@@ -55,11 +55,18 @@ where
         } else {
             match ready!(this.stream.poll_next(cx)) {
                 Some(item) => match this.converter.convert(item, this.buffer) {
+                    Ok(0) if this.converter.is_ended() => match this.converter.finalize() {
+                        Ok(()) => Poll::Ready(None),
+                        Err(e) => Poll::Ready(Some(Err(e))),
+                    },
                     Ok(0) => Poll::Pending,
                     Ok(_) => Poll::Ready(this.buffer.pop_front().map(Ok)),
                     Err(e) => Poll::Ready(Some(Err(e))),
                 },
-                None => Poll::Ready(None),
+                None => match this.converter.finalize() {
+                    Ok(()) => Poll::Ready(None),
+                    Err(e) => Poll::Ready(Some(Err(e))),
+                },
             }
         }
     }
