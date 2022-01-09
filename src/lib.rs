@@ -49,6 +49,19 @@ pub trait Converter {
         false
     }
 
+    /// Finalizing the converter.
+    ///
+    /// This method will be called when input iterators or streams reached end (or the converter
+    /// indicated the end by [`is_ended`] method.). You should finalize the converter or report
+    /// remaining inputs which should be consumed inside them in this method. The default behavior
+    /// is just returning `Ok(())`.
+    ///
+    /// [`is_ended`]: Self::is_ended
+    #[inline]
+    fn finalize(&self) -> Result<(), Self::Error> {
+        Ok(())
+    }
+
     /// Returnd the estimated bounds about the numbers of outputs that one item will produce.
     ///
     /// The first element is the lower bound, and the second element is the upper bound. (if
