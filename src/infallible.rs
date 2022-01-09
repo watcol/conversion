@@ -24,12 +24,12 @@ where
     where
         E: Extend<Self::Output>,
     {
-        self.convert(item, buf).unwrap_safe()
+        self.convert(item, buf).unwrap_infallible()
     }
 
     #[inline]
     fn finalize_ok(&mut self) {
-        self.finalize().unwrap_safe()
+        self.finalize().unwrap_infallible()
     }
 }
 
@@ -45,26 +45,26 @@ pub trait InfallibleError {}
 
 impl InfallibleError for Infallible {}
 
-/// A trait to unwrapping [`Result`] types with errors implementing [`InfallibleError`] safely.
+/// A trait for [`Result`] types with errors implementing [`InfallibleError`].
 ///
 /// [`Result`]: core::result::Result
 /// [`InfallibleError`]: self::InfallibleError
-pub trait UnwrappableResult: sealed_result::Sealed {
+pub trait InfallibleResult: sealed_result::Sealed {
     /// `T` of `Result<T, E>`.
     type T;
 
-    /// Unwrapping the result with no concern.
+    /// Unwrapping the result type.
     ///
     /// If self has [`Err`], the behavior is undefined.
     ///
     /// [`Err`]: core::result::Result::Err
-    fn unwrap_safe(self) -> Self::T;
+    fn unwrap_infallible(self) -> Self::T;
 }
 
-impl<T, E: InfallibleError> UnwrappableResult for Result<T, E> {
+impl<T, E: InfallibleError> InfallibleResult for Result<T, E> {
     type T = T;
 
-    fn unwrap_safe(self) -> Self::T {
+    fn unwrap_infallible(self) -> Self::T {
         #[cfg(feature = "nightly")]
         unsafe {
             self.unwrap_unchecked()
