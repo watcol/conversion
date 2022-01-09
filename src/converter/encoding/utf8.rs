@@ -4,9 +4,7 @@ use crate::Converter;
 use core::convert::Infallible;
 use core::fmt;
 
-/// An error for [`UTF8Decoder`].
-///
-/// [`UTF8Decoder`]: self::UTF8Decoder
+/// An error while decoding UTF-8.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct UTF8EncodingError;
 

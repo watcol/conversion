@@ -5,15 +5,11 @@ use core::fmt;
 
 /// An error while encoding/decoding ASCII characters.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ASCIIEncodingError {
-    OutOfBound,
-}
+pub struct ASCIIEncodingError;
 
 impl fmt::Display for ASCIIEncodingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::OutOfBound => write!(f, "A character out of bound."),
-        }
+        write!(f, "A character out of bound.")
     }
 }
 
@@ -45,7 +41,7 @@ impl Converter for ASCIIDecoder {
             buf.extend([item as char]);
             Ok(1)
         } else {
-            Err(ASCIIEncodingError::OutOfBound)
+            Err(ASCIIEncodingError)
         }
     }
 
@@ -79,7 +75,7 @@ impl Converter for ASCIIEncoder {
             buf.extend([item as u8]);
             Ok(1)
         } else {
-            Err(ASCIIEncodingError::OutOfBound)
+            Err(ASCIIEncodingError)
         }
     }
 
