@@ -1,6 +1,6 @@
 //! Iterator support.
-mod tryiterator;
-pub use tryiterator::ConvertedTryIterator;
+mod tryiter;
+pub use tryiter::ConvertedTryIterator;
 
 use crate::Converter;
 use alloc::collections::VecDeque;
@@ -9,7 +9,7 @@ use alloc::collections::VecDeque;
 ///
 /// # Example
 /// ```
-/// use conversion::iterator::ConvertedIterator;
+/// use conversion::iter::ConvertedIterator;
 /// use conversion::converter::IterConverter;
 ///
 /// let mut iter = ConvertedIterator::new("straße".chars(), IterConverter::new(char::to_uppercase));

@@ -6,7 +6,7 @@ use alloc::collections::VecDeque;
 ///
 /// # Example
 /// ```
-/// use conversion::iterator::ConvertedTryIterator;
+/// use conversion::iter::ConvertedTryIterator;
 /// use conversion::converter::TryMapConverter;
 /// use conversion::error::CombinedError;
 ///

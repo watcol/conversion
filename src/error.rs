@@ -5,7 +5,7 @@ use core::fmt;
 
 /// An error type for [`ConvertedTryIterator`] and [`ConvertedTryStream`].
 ///
-/// [`ConvertedTryIterator`]: crate::iterator::ConvertedTryIterator
+/// [`ConvertedTryIterator`]: crate::iter::ConvertedTryIterator
 /// [`ConvertedTryStream`]: crate::stream::ConvertedTryStream
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CombinedError<S, C> {

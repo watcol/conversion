@@ -7,7 +7,7 @@
 //!         encoding::utf8::{UTF8Decoder, UTF8Encoder},
 //!         IterConverter,
 //!     },
-//!     iterator::{ConvertedIterator, ConvertedTryIterator},
+//!     iter::{ConvertedIterator, ConvertedTryIterator},
 //! };
 //!
 //! // An original byte string.
@@ -37,7 +37,7 @@ pub mod infallible;
 
 #[cfg(feature = "alloc")]
 #[cfg_attr(feature = "nightly", doc(cfg(feature = "alloc")))]
-pub mod iterator;
+pub mod iter;
 #[cfg(feature = "async")]
 #[cfg_attr(feature = "nightly", doc(cfg(feature = "async")))]
 pub mod stream;
