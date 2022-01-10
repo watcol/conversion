@@ -13,6 +13,21 @@ use pin_project_lite::pin_project;
 pin_project! {
     /// A wrapper of [`Stream`], converts its items using [`TryConverter`].
     ///
+    /// # Example
+    /// ```
+    /// use conversion::converter::IterConverter;
+    /// use conversion::stream::ConvertedStream;
+    /// use futures::stream::{self, TryStreamExt};
+    ///
+    /// # futures::executor::block_on(async {
+    /// let stream = stream::iter("straße".chars());
+    ///
+    /// // The returned stream will be a TryStream.
+    /// let uppered = ConvertedStream::new(stream, IterConverter::new(char::to_uppercase));
+    /// assert_eq!(Ok(String::from("STRASSE")), uppered.try_collect().await);
+    /// # });
+    /// ```
+    ///
     /// [`Stream`]: futures_core::stream::Stream
     /// [`TryConverter`]: crate::TryConverter
     #[derive(Debug, Clone, PartialEq, Eq)]

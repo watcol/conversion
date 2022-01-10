@@ -8,6 +8,27 @@ use pin_project_lite::pin_project;
 pin_project! {
     /// A wrapper of [`TryStream`], converts its items using [`Converter`].
     ///
+    /// # Example
+    /// ```
+    /// use conversion::stream::ConvertedTryStream;
+    /// use conversion::converter::TryMapConverter;
+    /// use conversion::error::CombinedError;
+    /// use futures::stream::{self, StreamExt};
+    ///
+    /// # futures::executor::block_on(async {
+    /// let stream = stream::iter(["3", "0", "bad", "7"].into_iter().map(|s| s.parse::<i32>()));
+    /// let divide_42 = TryMapConverter::new(|i| (42i32).checked_div(i).ok_or("division by zero"));
+    /// let mut converted = ConvertedTryStream::new(stream, divide_42);
+    ///
+    /// assert_eq!(Some(Ok(14)), converted.next().await);
+    /// assert_eq!(Some(Err(CombinedError::Conversion("division by zero"))), converted.next().await);
+    /// assert!(matches!(converted.next().await, Some(Err(CombinedError::Stream(_)))));
+    /// assert_eq!(Some(Ok(6)), converted.next().await);
+    /// assert_eq!(None, converted.next().await);
+    ///
+    /// # });
+    /// ```
+    ///
     /// [`TryStream`]: futures_core::stream::TryStream
     /// [`Converter`]: crate::Converter
     #[derive(Clone, Debug, PartialEq, Eq)]
