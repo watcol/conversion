@@ -39,11 +39,14 @@ where
     C: Converter<Item = I::Item>,
 {
     /// Creating a new instance.
-    pub fn new(iter: I, converter: C) -> Self {
+    pub fn new<B>(iter: B, converter: C) -> Self
+    where
+        B: IntoIterator<IntoIter = I>,
+    {
         let (min, max) = converter.size_hint();
         Self {
             buffer: VecDeque::with_capacity(max.unwrap_or(min)),
-            iter,
+            iter: iter.into_iter(),
             converter,
         }
     }

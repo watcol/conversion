@@ -2,7 +2,9 @@ use core::{convert::Infallible, marker::PhantomData};
 
 use crate::Converter;
 
-/// Converting values with a function returns an iterator.
+/// Converting values with a function returns a type implements [`IntoIterator`].
+///
+/// [`IntoIterator`]: core::iter::IntoIterator
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct IterConverter<F, I> {
     f: F,
@@ -27,13 +29,13 @@ impl<F, I> IterConverter<F, I> {
     }
 }
 
-impl<F, I, Iter> Converter for IterConverter<F, I>
+impl<F, I, B> Converter for IterConverter<F, I>
 where
-    Iter: Iterator,
-    F: FnMut(I) -> Iter,
+    B: IntoIterator,
+    F: FnMut(I) -> B,
 {
     type Item = I;
-    type Output = Iter::Item;
+    type Output = B::Item;
     type Error = Infallible;
 
     fn convert<E>(&mut self, item: Self::Item, buf: &mut E) -> Result<usize, Self::Error>
@@ -45,7 +47,9 @@ where
     }
 }
 
-/// Converting values with a function returns a result of an iterator.
+/// Converting values with a function returns a result of a type implements [`IntoIterator`].
+///
+/// [`IntoIterator`]: core::iter::IntoIterator
 pub struct TryIterConverter<F, I> {
     f: F,
     _phantomi: PhantomData<I>,
@@ -69,13 +73,13 @@ impl<F, I> TryIterConverter<F, I> {
     }
 }
 
-impl<F, I, Iter, E> Converter for TryIterConverter<F, I>
+impl<F, I, B, E> Converter for TryIterConverter<F, I>
 where
-    Iter: Iterator,
-    F: FnMut(I) -> Result<Iter, E>,
+    B: IntoIterator,
+    F: FnMut(I) -> Result<B, E>,
 {
     type Item = I;
-    type Output = Iter::Item;
+    type Output = B::Item;
     type Error = E;
 
     fn convert<Ext>(&mut self, item: Self::Item, buf: &mut Ext) -> Result<usize, Self::Error>
