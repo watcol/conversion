@@ -4,6 +4,23 @@ use alloc::collections::VecDeque;
 /// A wrapper for [`Iterator`] whose item is [`Result`], converts its item using
 /// [`Converter`].
 ///
+/// # Example
+/// ```
+/// use conversion::iterator::ConvertedTryIterator;
+/// use conversion::converter::TryMapConverter;
+/// use conversion::error::CombinedError;
+///
+/// let iter = ["3", "0", "bad", "7"].into_iter().map(|s| s.parse::<i32>());
+/// let divide_42 = TryMapConverter::new(|i| (42i32).checked_div(i).ok_or("division by zero"));
+/// let mut converted = ConvertedTryIterator::new(iter, divide_42);
+///
+/// assert_eq!(Some(Ok(14)), converted.next());
+/// assert_eq!(Some(Err(CombinedError::Conversion("division by zero"))), converted.next());
+/// assert!(matches!(converted.next(), Some(Err(CombinedError::Stream(_)))));
+/// assert_eq!(Some(Ok(6)), converted.next());
+/// assert_eq!(None, converted.next());
+/// ```
+///
 /// [`Iterator`]: core::iter::Iterator
 /// [`Converter`]: crate::Converter
 #[derive(Debug, Clone, PartialEq, Eq)]

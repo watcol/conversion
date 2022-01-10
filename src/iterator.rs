@@ -7,6 +7,23 @@ use alloc::collections::VecDeque;
 
 /// A wrapper for [`Iterator`], converts its item using [`Converter`].
 ///
+/// # Example
+/// ```
+/// use conversion::iterator::ConvertedIterator;
+/// use conversion::converter::IterConverter;
+///
+/// let mut iter = ConvertedIterator::new("straße".chars(), IterConverter::new(char::to_uppercase));
+///
+/// assert_eq!(Some(Ok('S')), iter.next());
+/// assert_eq!(Some(Ok('T')), iter.next());
+/// assert_eq!(Some(Ok('R')), iter.next());
+/// assert_eq!(Some(Ok('A')), iter.next());
+/// assert_eq!(Some(Ok('S')), iter.next());
+/// assert_eq!(Some(Ok('S')), iter.next());
+/// assert_eq!(Some(Ok('E')), iter.next());
+/// assert_eq!(None, iter.next());
+/// ```
+///
 /// [`Iterator`]: core::iter::Iterator
 /// [`Converter`]: crate::Converter
 #[derive(Debug, Clone, PartialEq, Eq)]
