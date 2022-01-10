@@ -5,35 +5,25 @@
 //! use conversion::{
 //!     converter::{
 //!         encoding::utf8::{UTF8Decoder, UTF8Encoder},
-//!         MapConverter,
+//!         IterConverter,
 //!     },
 //!     iterator::{ConvertedIterator, ConvertedTryIterator},
 //! };
 //!
 //! // An original byte string.
-//! let iter = b"\xf0\x9d\x84\x9emusic".into_iter().cloned();
+//! let iter = b"stra\xc3\x9fe".into_iter().cloned();
 //!
 //! // Decoding UTF-8 byte string.
 //! let decoded = ConvertedIterator::new(iter, UTF8Decoder::new());
+//! assert_eq!(Ok(String::from("straße")), decoded.clone().collect());
+//!
 //! // Convert to uppercase. (use ConvertedTryIterator because `decoded` returns Result items.)
-//! let mut uppered =
-//!     ConvertedTryIterator::new(decoded, MapConverter::new(|c: char| c.to_ascii_uppercase()));
-//!
-//! // Clone it because it will be consumed.
-//! let uppered2 = uppered.clone();
-//!
-//! assert_eq!(Some(Ok('𝄞')), uppered.next());
-//! assert_eq!(Some(Ok('M')), uppered.next());
-//! assert_eq!(Some(Ok('U')), uppered.next());
-//! assert_eq!(Some(Ok('S')), uppered.next());
-//! assert_eq!(Some(Ok('I')), uppered.next());
-//! assert_eq!(Some(Ok('C')), uppered.next());
-//! assert_eq!(None, uppered.next());
+//! let uppered = ConvertedTryIterator::new(decoded, IterConverter::new(char::to_uppercase));
+//! assert_eq!(Ok(String::from("STRASSE")), uppered.clone().collect());
 //!
 //! // Re-encode the value.
-//! let encoded: Result<Vec<u8>, _> = ConvertedTryIterator::new(uppered2, UTF8Encoder::new()).collect();
-//!
-//! assert_eq!(Ok(b"\xf0\x9d\x84\x9eMUSIC".to_vec()), encoded);
+//! let encoded = ConvertedTryIterator::new(uppered, UTF8Encoder::new());
+//! assert_eq!(Ok(b"STRASSE".to_vec()), encoded.collect());
 //! ```
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "nightly", feature(doc_cfg))]
