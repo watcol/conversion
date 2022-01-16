@@ -1,7 +1,8 @@
 //! UTF-16 Decoder/Encoder.
 
 use crate::Converter;
-use core::{convert::Infallible, fmt};
+use core::convert::Infallible;
+use core::fmt;
 
 use super::utf32::UTF32Decoder;
 

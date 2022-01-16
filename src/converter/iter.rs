@@ -1,5 +1,6 @@
+use core::convert::Infallible;
 use core::fmt;
-use core::{convert::Infallible, marker::PhantomData};
+use core::marker::PhantomData;
 
 use crate::Converter;
 

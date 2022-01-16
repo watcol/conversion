@@ -1,4 +1,5 @@
-use crate::{error::CombinedError, Converter};
+use crate::error::CombinedError;
+use crate::Converter;
 use alloc::collections::VecDeque;
 
 /// A wrapper for [`Iterator`] whose item is [`Result`], converts its item using

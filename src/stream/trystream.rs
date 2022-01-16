@@ -1,4 +1,5 @@
-use crate::{error::CombinedError, Converter};
+use crate::error::CombinedError;
+use crate::Converter;
 use alloc::collections::VecDeque;
 use core::pin::Pin;
 use core::task::{Context, Poll};

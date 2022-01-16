@@ -1,4 +1,5 @@
-use core::{fmt, marker::PhantomData};
+use core::fmt;
+use core::marker::PhantomData;
 
 use crate::Converter;
 

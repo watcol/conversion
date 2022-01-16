@@ -1,7 +1,8 @@
 //! UTF-32 Decoder/Encoder.
 
 use crate::Converter;
-use core::{convert::Infallible, fmt};
+use core::convert::Infallible;
+use core::fmt;
 
 /// An error while encoding/decoding UTF-32 characters.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
