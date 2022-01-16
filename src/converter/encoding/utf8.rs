@@ -72,13 +72,13 @@ impl Converter for UTF8Decoder {
                 0xE0..=0xEF => {
                     self.remain = 2;
                     self.codepoint = ((item & 0b0000_1111) as u32) << 12;
-                    self.lower = 0xA0;
+                    self.lower = if item == 0xE0 { 0xA0 } else { 0x80 };
                     Ok(0)
                 }
                 0xF0..=0xF4 => {
                     self.remain = 3;
                     self.codepoint = ((item & 0b0000_0111) as u32) << 18;
-                    self.lower = 0x90;
+                    self.lower = if item == 0xF0 { 0x90 } else { 0x80 };
                     Ok(0)
                 }
                 _ => Err(UTF8EncodingError),
@@ -157,5 +157,45 @@ impl Converter for UTF8Encoder {
     #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (1, Some(4))
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[cfg(feature = "alloc")]
+    #[test]
+    fn decode_utf8() {
+        use crate::iter::ConvertedIterator;
+        use alloc::string::String;
+        let iter = b"\x41\xC3\x80\xE3\x81\x82\xF0\x9D\x84\x9E".iter().cloned();
+        let decoded = ConvertedIterator::new(iter, UTF8Decoder::new());
+        assert_eq!(Ok(String::from("AÀあ𝄞")), decoded.collect());
+    }
+
+    #[cfg(feature = "alloc")]
+    #[test]
+    fn redundancy() {
+        use crate::iter::ConvertedIterator;
+        use alloc::string::String;
+        assert_eq!(
+            Ok(String::from("/")),
+            ConvertedIterator::new([0x2F], UTF8Decoder::new()).collect()
+        );
+        assert_eq!(
+            Err(UTF8EncodingError),
+            ConvertedIterator::new([0xC0, 0xAF], UTF8Decoder::new()).collect::<Result<String, _>>()
+        );
+        assert_eq!(
+            Err(UTF8EncodingError),
+            ConvertedIterator::new([0xE0, 0x80, 0xAF], UTF8Decoder::new())
+                .collect::<Result<String, _>>()
+        );
+        assert_eq!(
+            Err(UTF8EncodingError),
+            ConvertedIterator::new([0xF0, 0x80, 0x80, 0xAF], UTF8Decoder::new())
+                .collect::<Result<String, _>>()
+        );
     }
 }
