@@ -1,7 +1,14 @@
 # Conversion
+![status](https://img.shields.io/badge/status-Active-brightgreen)
+[![crates.io](https://img.shields.io/crates/v/conversion)](https://crates.io/crates/conversion)
+[![docs.rs](https://docs.rs/conversion/badge.svg)](https://docs.rs/conversion)
+[![Downloads](https://img.shields.io/crates/d/conversion)](https://crates.io/crates/conversion)
+[![Downloads (latest)](https://img.shields.io/crates/dv/conversion)](https://crates.io/crates/conversion)
+[![License](https://img.shields.io/crates/l/conversion)](https://github.com/watcol/conversion/blob/main/LICENSE)
+
 An abstraction crate to convert iterators on the fly.
 
-# Demo
+## Demo
 ```rust
 use conversion::converter::encoding::utf8::{UTF8Decoder, UTF8Encoder};
 use conversion::converter::IterConverter;
@@ -23,7 +30,10 @@ let encoded = ConvertedTryIterator::new(uppered, UTF8Encoder::new());
 assert_eq!(Ok(b"STRASSE".to_vec()), encoded.collect());
 ```
 
-# Usage
+## Documentation
+API Documentations are available on [here](https://docs.rs/conversion).
+
+## Usage
 Add to your `Cargo.toml`:
 ```toml
 [dependencies]
