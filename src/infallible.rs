@@ -65,17 +65,8 @@ impl<T, E: InfallibleError> InfallibleResult for Result<T, E> {
     type T = T;
 
     fn unwrap_infallible(self) -> Self::T {
-        #[cfg(feature = "nightly")]
         unsafe {
             self.unwrap_unchecked()
-        }
-        #[cfg(not(feature = "nightly"))]
-        {
-            debug_assert!(self.is_ok());
-            match self {
-                Ok(t) => t,
-                Err(_) => unsafe { core::hint::unreachable_unchecked() },
-            }
         }
     }
 }
