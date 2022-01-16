@@ -1,10 +1,11 @@
 # Conversion
-![status](https://img.shields.io/badge/status-Active-brightgreen)
-[![crates.io](https://img.shields.io/crates/v/conversion)](https://crates.io/crates/conversion)
-[![docs.rs](https://docs.rs/conversion/badge.svg)](https://docs.rs/conversion)
-[![Downloads](https://img.shields.io/crates/d/conversion)](https://crates.io/crates/conversion)
-[![Downloads (latest)](https://img.shields.io/crates/dv/conversion)](https://crates.io/crates/conversion)
-[![License](https://img.shields.io/crates/l/conversion)](https://github.com/watcol/conversion/blob/main/LICENSE)
+![status](https://img.shields.io/badge/status-Active-brightgreen?style=flat-square)
+[![crates.io](https://img.shields.io/crates/v/conversion?style=flat-square)](https://crates.io/crates/conversion)
+[![Downloads](https://img.shields.io/crates/d/conversion?style=flat-square)](https://crates.io/crates/conversion)
+[![Downloads (latest)](https://img.shields.io/crates/dv/conversion?style=flat-square)](https://crates.io/crates/conversion)
+[![License](https://img.shields.io/crates/l/conversion?style=flat-square)](https://github.com/watcol/conversion/blob/main/LICENSE)
+![Lint](https://img.shields.io/github/workflow/status/watcol/conversion/Lint?label=lint&style=flat-square)
+![Test](https://img.shields.io/github/workflow/status/watcol/conversion/Test?label=test&style=flat-square)
 
 An abstraction crate to convert iterators on the fly.
 
