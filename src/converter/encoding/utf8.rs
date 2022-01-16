@@ -18,6 +18,17 @@ impl fmt::Display for UTF8EncodingError {
 impl std::error::Error for UTF8EncodingError {}
 
 /// A decoder for UTF-8
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf8::UTF8Decoder;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = b"stra\xc3\x9fe".into_iter().cloned();
+/// let decoded = ConvertedIterator::new(iter, UTF8Decoder::new());
+///
+/// assert_eq!(Ok(String::from("straße")), decoded.collect());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF8Decoder {
     // remaining bytes to construct one character.
@@ -106,6 +117,17 @@ impl Converter for UTF8Decoder {
 }
 
 /// An encoder for UTF-8.
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf8::UTF8Encoder;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "straße".chars();
+/// let encoded = ConvertedIterator::new(iter, UTF8Encoder::new());
+///
+/// assert_eq!(Ok(b"stra\xc3\x9fe".to_vec()), encoded.collect());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF8Encoder;
 

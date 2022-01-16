@@ -6,6 +6,18 @@ use crate::Converter;
 
 /// Converting values with a function returns a type implements [`IntoIterator`].
 ///
+/// # Examples
+/// ```
+/// use conversion::converter::IterConverter;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "straße".chars();
+///
+/// let uppered = ConvertedIterator::new(iter, IterConverter::new(char::to_uppercase));
+///
+/// assert_eq!(Ok(String::from("STRASSE")), uppered.collect());
+/// ```
+///
 /// [`IntoIterator`]: core::iter::IntoIterator
 pub struct IterConverter<F, I> {
     f: F,
@@ -77,6 +89,28 @@ where
 }
 
 /// Converting values with a function returns a result of a type implements [`IntoIterator`].
+///
+/// # Examples
+/// ```
+/// use conversion::converter::TryIterConverter;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "straße".chars();
+///
+/// let mut uppered = ConvertedIterator::new(iter, TryIterConverter::new(|c: char| if c.is_ascii() {
+///     Ok(c.to_uppercase())
+/// } else {
+///     Err("This character is not ASCII.")
+/// }));
+///
+/// assert_eq!(Some(Ok('S')), uppered.next());
+/// assert_eq!(Some(Ok('T')), uppered.next());
+/// assert_eq!(Some(Ok('R')), uppered.next());
+/// assert_eq!(Some(Ok('A')), uppered.next());
+/// assert_eq!(Some(Err("This character is not ASCII.")), uppered.next());
+/// assert_eq!(Some(Ok('E')), uppered.next());
+/// assert_eq!(None, uppered.next());
+/// ```
 ///
 /// [`IntoIterator`]: core::iter::IntoIterator
 pub struct TryIterConverter<F, I> {

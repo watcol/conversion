@@ -20,6 +20,26 @@ impl fmt::Display for UTF16EncodingError {
 impl std::error::Error for UTF16EncodingError {}
 
 /// A 16-bit decoder for UTF-16.
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf16::{UTF16Decoder, UTF16EncodingError};
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = [
+///     0xD834, 0xDD1E, 0x006d, 0x0075, 0x0073, 0xDD1E, 0x0069, 0x0063, 0xD834
+/// ].into_iter();
+/// let mut decoded = ConvertedIterator::new(iter, UTF16Decoder::new());
+///
+/// assert_eq!(Some(Ok('𝄞')), decoded.next());
+/// assert_eq!(Some(Ok('m')), decoded.next());
+/// assert_eq!(Some(Ok('u')), decoded.next());
+/// assert_eq!(Some(Ok('s')), decoded.next());
+/// assert_eq!(Some(Err(UTF16EncodingError)), decoded.next());
+/// assert_eq!(Some(Ok('i')), decoded.next());
+/// assert_eq!(Some(Ok('c')), decoded.next());
+/// assert_eq!(Some(Err(UTF16EncodingError)), decoded.next());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF16Decoder {
     buf: Option<u16>,
@@ -46,10 +66,18 @@ impl Converter for UTF16Decoder {
             Some(w) if item & 0xFC00 == 0xDC00 => {
                 self.buf = None;
                 UTF32Decoder
-                    .convert(((w & 0x3FF) as u32) << 10 | (item & 0x3FF) as u32, buf)
+                    .convert(
+                        ((((w & 0x3C0) as u32) >> 6) + 1) << 16
+                            | ((w & 0x3F) as u32) << 10
+                            | (item & 0x3FF) as u32,
+                        buf,
+                    )
                     .map_err(|_| UTF16EncodingError)
             }
-            Some(_) => Err(UTF16EncodingError),
+            Some(_) => {
+                self.buf = None;
+                Err(UTF16EncodingError)
+            }
             None if item & 0xFC00 == 0xD800 => {
                 self.buf = Some(item);
                 Ok(0)
@@ -77,6 +105,19 @@ impl Converter for UTF16Decoder {
 }
 
 /// A 16-bit encoder for UTF-16.
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf16::UTF16Encoder;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "𝄞music".chars();
+/// let decoded = ConvertedIterator::new(iter, UTF16Encoder::new());
+///
+/// assert_eq!(Ok(vec![
+///     0xD834, 0xDD1E, 0x006d, 0x0075, 0x0073, 0x0069, 0x0063,
+/// ]), decoded.collect());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF16Encoder;
 
@@ -110,6 +151,25 @@ impl Converter for UTF16Encoder {
 }
 
 /// A byte decoder for UTF-16 (big-endian).
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf16::{UTF16BEDecoder, UTF16EncodingError};
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = b"\xD8\x34\xDD\x1E\x00\x6d\x00\x75\x00\x73\xDD\x1E\x00\x69\x00\x63\xD8\x34"
+///     .into_iter().cloned();
+/// let mut decoded = ConvertedIterator::new(iter, UTF16BEDecoder::new());
+///
+/// assert_eq!(Some(Ok('𝄞')), decoded.next());
+/// assert_eq!(Some(Ok('m')), decoded.next());
+/// assert_eq!(Some(Ok('u')), decoded.next());
+/// assert_eq!(Some(Ok('s')), decoded.next());
+/// assert_eq!(Some(Err(UTF16EncodingError)), decoded.next());
+/// assert_eq!(Some(Ok('i')), decoded.next());
+/// assert_eq!(Some(Ok('c')), decoded.next());
+/// assert_eq!(Some(Err(UTF16EncodingError)), decoded.next());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF16BEDecoder {
     byte: Option<u8>,
@@ -134,8 +194,14 @@ impl Converter for UTF16BEDecoder {
         E: Extend<Self::Output>,
     {
         match self.byte {
-            Some(b) => self.inner.convert(u16::from_be_bytes([b, item]), buf),
-            None => Ok(0),
+            Some(b) => {
+                self.byte = None;
+                self.inner.convert(u16::from_be_bytes([b, item]), buf)
+            }
+            None => {
+                self.byte = Some(item);
+                Ok(0)
+            }
         }
     }
 
@@ -156,6 +222,17 @@ impl Converter for UTF16BEDecoder {
 }
 
 /// A byte encoder for UTF-16 (big-endian).
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf16::UTF16BEEncoder;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "𝄞music".chars();
+/// let decoded = ConvertedIterator::new(iter, UTF16BEEncoder::new());
+///
+/// assert_eq!(Ok(b"\xD8\x34\xDD\x1E\x00\x6d\x00\x75\x00\x73\x00\x69\x00\x63".to_vec()), decoded.collect());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF16BEEncoder;
 
@@ -191,6 +268,25 @@ impl Converter for UTF16BEEncoder {
 }
 
 /// A byte decoder for UTF-16 (little-endian).
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf16::{UTF16LEDecoder, UTF16EncodingError};
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = b"\x34\xD8\x1E\xDD\x6d\x00\x75\x00\x73\x00\x1E\xDD\x69\x00\x63\x00\x34\xD8"
+///     .into_iter().cloned();
+/// let mut decoded = ConvertedIterator::new(iter, UTF16LEDecoder::new());
+///
+/// assert_eq!(Some(Ok('𝄞')), decoded.next());
+/// assert_eq!(Some(Ok('m')), decoded.next());
+/// assert_eq!(Some(Ok('u')), decoded.next());
+/// assert_eq!(Some(Ok('s')), decoded.next());
+/// assert_eq!(Some(Err(UTF16EncodingError)), decoded.next());
+/// assert_eq!(Some(Ok('i')), decoded.next());
+/// assert_eq!(Some(Ok('c')), decoded.next());
+/// assert_eq!(Some(Err(UTF16EncodingError)), decoded.next());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF16LEDecoder {
     byte: Option<u8>,
@@ -215,8 +311,14 @@ impl Converter for UTF16LEDecoder {
         E: Extend<Self::Output>,
     {
         match self.byte {
-            Some(b) => self.inner.convert(u16::from_le_bytes([b, item]), buf),
-            None => Ok(0),
+            Some(b) => {
+                self.byte = None;
+                self.inner.convert(u16::from_le_bytes([b, item]), buf)
+            }
+            None => {
+                self.byte = Some(item);
+                Ok(0)
+            }
         }
     }
 
@@ -237,6 +339,17 @@ impl Converter for UTF16LEDecoder {
 }
 
 /// A byte encoder for UTF-16 (little-endian).
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf16::UTF16LEEncoder;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "𝄞music".chars();
+/// let decoded = ConvertedIterator::new(iter, UTF16LEEncoder::new());
+///
+/// assert_eq!(Ok(b"\x34\xD8\x1E\xDD\x6d\x00\x75\x00\x73\x00\x69\x00\x63\x00".to_vec()), decoded.collect());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF16LEEncoder;
 

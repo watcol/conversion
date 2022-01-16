@@ -17,6 +17,24 @@ impl fmt::Display for ASCIIEncodingError {
 impl std::error::Error for ASCIIEncodingError {}
 
 /// A decoder for 7-bit ASCII.
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::ascii::{ASCIIDecoder, ASCIIEncodingError};
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = b"stra\xc3\x9fe".into_iter().cloned();
+/// let mut decoded = ConvertedIterator::new(iter, ASCIIDecoder::new());
+///
+/// assert_eq!(Some(Ok('s')), decoded.next());
+/// assert_eq!(Some(Ok('t')), decoded.next());
+/// assert_eq!(Some(Ok('r')), decoded.next());
+/// assert_eq!(Some(Ok('a')), decoded.next());
+/// assert_eq!(Some(Err(ASCIIEncodingError)), decoded.next());
+/// assert_eq!(Some(Err(ASCIIEncodingError)), decoded.next());
+/// assert_eq!(Some(Ok('e')), decoded.next());
+/// assert_eq!(None, decoded.next());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ASCIIDecoder;
 
@@ -52,6 +70,23 @@ impl Converter for ASCIIDecoder {
 }
 
 /// An encoder for 7-bit ASCII.
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::ascii::{ASCIIEncoder, ASCIIEncodingError};
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "straße".chars();
+/// let mut encoded = ConvertedIterator::new(iter, ASCIIEncoder::new());
+///
+/// assert_eq!(Some(Ok(b's')), encoded.next());
+/// assert_eq!(Some(Ok(b't')), encoded.next());
+/// assert_eq!(Some(Ok(b'r')), encoded.next());
+/// assert_eq!(Some(Ok(b'a')), encoded.next());
+/// assert_eq!(Some(Err(ASCIIEncodingError)), encoded.next());
+/// assert_eq!(Some(Ok(b'e')), encoded.next());
+/// assert_eq!(None, encoded.next());
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ASCIIEncoder;
 

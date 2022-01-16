@@ -6,7 +6,16 @@ use crate::Converter;
 
 /// Converting values with a function.
 ///
-/// [`TryInto`]: core::convert::TryInto
+/// # Examples
+/// ```
+/// use conversion::converter::MapConverter;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = [1, 2, 3].into_iter();
+/// let doubled = ConvertedIterator::new(iter, MapConverter::new(|x| 2 * x));
+///
+/// assert_eq!(Ok(vec![2, 4, 6]), doubled.collect());
+/// ```
 pub struct MapConverter<F, I> {
     f: F,
     _phantomi: PhantomData<I>,
@@ -82,7 +91,20 @@ where
 
 /// Converting values with a failable function.
 ///
-/// [`TryInto`]: core::convert::TryInto
+/// # Examples
+/// ```
+/// use conversion::converter::TryMapConverter;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = ["2", "42", "bad", "5"].into_iter();
+/// let mut parsed = ConvertedIterator::new(iter, TryMapConverter::new(|s: &str| s.parse::<i32>()));
+///
+/// assert_eq!(Some(Ok(2)), parsed.next());
+/// assert_eq!(Some(Ok(42)), parsed.next());
+/// assert!(matches!(parsed.next(), Some(Err(_))));
+/// assert_eq!(Some(Ok(5)), parsed.next());
+/// assert_eq!(None, parsed.next());
+/// ```
 pub struct TryMapConverter<F, I> {
     f: F,
     _phantomi: PhantomData<I>,

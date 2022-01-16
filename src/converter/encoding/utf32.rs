@@ -18,6 +18,18 @@ impl fmt::Display for UTF32EncodingError {
 impl std::error::Error for UTF32EncodingError {}
 
 /// A 32-bit decoder for UTF-32.
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf32::{UTF32Decoder, UTF32EncodingError};
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = [0x1F4AF, 0x110000].into_iter();
+/// let mut decoded = ConvertedIterator::new(iter, UTF32Decoder::new());
+///
+/// assert_eq!(Some(Ok('💯')), decoded.next());
+/// assert_eq!(Some(Err(UTF32EncodingError)), decoded.next());
+/// assert_eq!(None, decoded.next());
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF32Decoder;
 
@@ -54,6 +66,16 @@ impl Converter for UTF32Decoder {
 }
 
 /// A 32-bit encoder for UTF-32.
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf32::UTF32Encoder;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "💯❤".chars();
+/// let encoded = ConvertedIterator::new(iter, UTF32Encoder::new());
+///
+/// assert_eq!(Ok(vec![0x1F4AF, 0x2764]), encoded.collect());
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF32Encoder;
 
@@ -85,6 +107,18 @@ impl Converter for UTF32Encoder {
 }
 
 /// A byte decoder for UTF-32 (big-endian).
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf32::{UTF32BEDecoder, UTF32EncodingError};
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = b"\x00\x01\xF4\xAF\x00\x11\x00\x00".into_iter().cloned();
+/// let mut decoded = ConvertedIterator::new(iter, UTF32BEDecoder::new());
+///
+/// assert_eq!(Some(Ok('💯')), decoded.next());
+/// assert_eq!(Some(Err(UTF32EncodingError)), decoded.next());
+/// assert_eq!(None, decoded.next());
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF32BEDecoder {
     bytes: [u8; 4],
@@ -134,6 +168,16 @@ impl Converter for UTF32BEDecoder {
 }
 
 /// A byte encoder for UTF-32 (big-endian).
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf32::UTF32BEEncoder;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "💯❤".chars();
+/// let encoded = ConvertedIterator::new(iter, UTF32BEEncoder::new());
+///
+/// assert_eq!(Ok(b"\x00\x01\xF4\xAF\x00\x00\x27\x64".to_vec()), encoded.collect());
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF32BEEncoder;
 
@@ -165,6 +209,18 @@ impl Converter for UTF32BEEncoder {
 }
 
 /// A byte decoder for UTF-32 (little-endian).
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf32::{UTF32LEDecoder, UTF32EncodingError};
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = b"\xAF\xF4\x01\x00\x00\x00\x11\x00".into_iter().cloned();
+/// let mut decoded = ConvertedIterator::new(iter, UTF32LEDecoder::new());
+///
+/// assert_eq!(Some(Ok('💯')), decoded.next());
+/// assert_eq!(Some(Err(UTF32EncodingError)), decoded.next());
+/// assert_eq!(None, decoded.next());
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF32LEDecoder {
     bytes: [u8; 4],
@@ -214,6 +270,16 @@ impl Converter for UTF32LEDecoder {
 }
 
 /// A byte encoder for UTF-32 (little-endian).
+///
+/// # Examples
+/// ```
+/// use conversion::converter::encoding::utf32::UTF32LEEncoder;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = "💯❤".chars();
+/// let encoded = ConvertedIterator::new(iter, UTF32LEEncoder::new());
+///
+/// assert_eq!(Ok(b"\xAF\xF4\x01\x00\x64\x27\x00\x00".to_vec()), encoded.collect());
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct UTF32LEEncoder;
 

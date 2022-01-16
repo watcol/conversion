@@ -5,6 +5,19 @@ use crate::Converter;
 
 /// Converting values with [`TryInto`] trait.
 ///
+/// # Examples
+/// ```
+/// use conversion::converter::IntoConverter;
+/// use conversion::iter::ConvertedIterator;
+///
+/// let iter = [0x2764, 0x110000];
+/// let mut decoded = ConvertedIterator::new(iter, IntoConverter::<u32, char>::new());
+///
+/// assert_eq!(Some(Ok('❤')), decoded.next());
+/// assert!(matches!(decoded.next(), Some(Err(_))));
+/// assert_eq!(None, decoded.next());
+/// ```
+///
 /// [`TryInto`]: core::convert::TryInto
 pub struct IntoConverter<I, O> {
     _phantomi: PhantomData<I>,
