@@ -44,6 +44,8 @@ pub mod stream;
 
 pub mod converter;
 
+use converter::ChainedConverter;
+
 /// A trait for converters which converts N items into M outputs.
 pub trait Converter {
     /// The type of input items.
@@ -103,5 +105,33 @@ pub trait Converter {
     #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         (0, None)
+    }
+
+    /// Chaining two converters.
+    ///
+    /// If the first converter ended, the converter will provides outputs from the second
+    /// converter.
+    ///
+    /// # Examples
+    /// ```
+    /// use conversion::converter::encoding::utf16::UTF16LEDecoder;
+    /// use conversion::converter::ExactConverter;
+    /// use conversion::iter::ConvertedIterator;
+    /// use conversion::Converter;
+    ///
+    /// let iter = b"\xFF\xFE\x3D\xD8\xA3\xDC".into_iter().cloned();
+    /// // UTF-16 with BOM
+    /// let conv = ExactConverter::new([0xFF, 0xFE]).chain(UTF16LEDecoder::new());
+    /// let decoded = ConvertedIterator::new(iter, conv);
+    ///
+    /// assert_eq!(Ok(String::from("💣")), decoded.collect());
+    /// ```
+    #[inline]
+    fn chain<C>(self, other: C) -> ChainedConverter<Self, C>
+    where
+        C: Converter<Item = Self::Item, Output = Self::Output>,
+        Self: Sized,
+    {
+        ChainedConverter::new(self, other)
     }
 }
