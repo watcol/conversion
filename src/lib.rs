@@ -2,13 +2,9 @@
 //!
 //! # Demo
 //! ```
-//! use conversion::{
-//!     converter::{
-//!         encoding::utf8::{UTF8Decoder, UTF8Encoder},
-//!         IterConverter,
-//!     },
-//!     iter::{ConvertedIterator, ConvertedTryIterator},
-//! };
+//! use conversion::converter::encoding::utf8::{UTF8Decoder, UTF8Encoder};
+//! use conversion::converter::IterConverter;
+//! use conversion::iter::{ConvertedIterator, ConvertedTryIterator};
 //!
 //! // An original byte string.
 //! let iter = b"stra\xc3\x9fe".into_iter().cloned();
