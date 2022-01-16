@@ -19,7 +19,7 @@ env:
 
 jobs:
   build:
-    name: Tests on ${{ matrix.os }}
+    name: Tests on ${{ matrix.os }} (${{ matrix.toolchain }})
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -45,4 +45,4 @@ jobs:
         toolchain: stable
         override: true
     - name: Test
-      run: cargo test --all --all-features
+      run: cargo test --all --features=async
