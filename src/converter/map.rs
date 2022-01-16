@@ -1,15 +1,42 @@
-use core::{convert::Infallible, marker::PhantomData};
+use core::{convert::Infallible, fmt, marker::PhantomData};
 
 use crate::Converter;
 
 /// Converting values with a function.
 ///
 /// [`TryInto`]: core::convert::TryInto
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct MapConverter<F, I> {
     f: F,
     _phantomi: PhantomData<I>,
 }
+
+impl<F: Clone, I> Clone for MapConverter<F, I> {
+    #[inline]
+    fn clone(&self) -> Self {
+        Self {
+            f: self.f.clone(),
+            _phantomi: PhantomData,
+        }
+    }
+}
+
+impl<F: Copy, I> Copy for MapConverter<F, I> {}
+
+impl<F: fmt::Debug, I> fmt::Debug for MapConverter<F, I> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("MapConverter").field(&self.f).finish()
+    }
+}
+
+impl<F: PartialEq, I> PartialEq for MapConverter<F, I> {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.f == other.f
+    }
+}
+
+impl<F: Eq, I> Eq for MapConverter<F, I> {}
 
 impl<F, I> From<F> for MapConverter<F, I> {
     #[inline]
@@ -58,6 +85,34 @@ pub struct TryMapConverter<F, I> {
     f: F,
     _phantomi: PhantomData<I>,
 }
+
+impl<F: Clone, I> Clone for TryMapConverter<F, I> {
+    #[inline]
+    fn clone(&self) -> Self {
+        Self {
+            f: self.f.clone(),
+            _phantomi: PhantomData,
+        }
+    }
+}
+
+impl<F: Copy, I> Copy for TryMapConverter<F, I> {}
+
+impl<F: fmt::Debug, I> fmt::Debug for TryMapConverter<F, I> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("TryMapConverter").field(&self.f).finish()
+    }
+}
+
+impl<F: PartialEq, I> PartialEq for TryMapConverter<F, I> {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.f == other.f
+    }
+}
+
+impl<F: Eq, I> Eq for TryMapConverter<F, I> {}
 
 impl<F, I> From<F> for TryMapConverter<F, I> {
     #[inline]

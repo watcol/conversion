@@ -1,3 +1,4 @@
+use core::fmt;
 use core::{convert::Infallible, marker::PhantomData};
 
 use crate::Converter;
@@ -5,11 +6,38 @@ use crate::Converter;
 /// Converting values with a function returns a type implements [`IntoIterator`].
 ///
 /// [`IntoIterator`]: core::iter::IntoIterator
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct IterConverter<F, I> {
     f: F,
     _phantomi: PhantomData<I>,
 }
+
+impl<F: Clone, I> Clone for IterConverter<F, I> {
+    #[inline]
+    fn clone(&self) -> Self {
+        Self {
+            f: self.f.clone(),
+            _phantomi: PhantomData,
+        }
+    }
+}
+
+impl<F: Copy, I> Copy for IterConverter<F, I> {}
+
+impl<F: fmt::Debug, I> fmt::Debug for IterConverter<F, I> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("IterConverter").field(&self.f).finish()
+    }
+}
+
+impl<F: PartialEq, I> PartialEq for IterConverter<F, I> {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.f == other.f
+    }
+}
+
+impl<F: Eq, I> Eq for IterConverter<F, I> {}
 
 impl<F, I> From<F> for IterConverter<F, I> {
     #[inline]
@@ -54,6 +82,34 @@ pub struct TryIterConverter<F, I> {
     f: F,
     _phantomi: PhantomData<I>,
 }
+
+impl<F: Clone, I> Clone for TryIterConverter<F, I> {
+    #[inline]
+    fn clone(&self) -> Self {
+        Self {
+            f: self.f.clone(),
+            _phantomi: PhantomData,
+        }
+    }
+}
+
+impl<F: Copy, I> Copy for TryIterConverter<F, I> {}
+
+impl<F: fmt::Debug, I> fmt::Debug for TryIterConverter<F, I> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("TryIterConverter").field(&self.f).finish()
+    }
+}
+
+impl<F: PartialEq, I> PartialEq for TryIterConverter<F, I> {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.f == other.f
+    }
+}
+
+impl<F: Eq, I> Eq for TryIterConverter<F, I> {}
 
 impl<F, I> From<F> for TryIterConverter<F, I> {
     #[inline]

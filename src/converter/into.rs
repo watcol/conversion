@@ -1,15 +1,39 @@
-use core::marker::PhantomData;
+use core::{fmt, marker::PhantomData};
 
 use crate::Converter;
 
 /// Converting values with [`TryInto`] trait.
 ///
 /// [`TryInto`]: core::convert::TryInto
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct IntoConverter<I, O> {
     _phantomi: PhantomData<I>,
     _phantomo: PhantomData<O>,
 }
+
+impl<I, O> Clone for IntoConverter<I, O> {
+    #[inline]
+    fn clone(&self) -> Self {
+        Self::default()
+    }
+}
+
+impl<I, O> Copy for IntoConverter<I, O> {}
+
+impl<I, O> fmt::Debug for IntoConverter<I, O> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("IntoConverter").finish()
+    }
+}
+
+impl<I, O> PartialEq for IntoConverter<I, O> {
+    #[inline]
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+
+impl<I, O> Eq for IntoConverter<I, O> {}
 
 impl<I, O> Default for IntoConverter<I, O> {
     #[inline]
